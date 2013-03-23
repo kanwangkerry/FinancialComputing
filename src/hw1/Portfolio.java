@@ -8,16 +8,30 @@ public class Portfolio implements IPortfolio {
 	private PositionIter iter;
 
 	@Override
+	public boolean equals(Object obj){
+		if(!(obj instanceof Portfolio))
+			return false;
+		return this.toString().equals(obj.toString());
+	}
+	
+	@Override
+	public String toString(){
+		return positions.toString();
+	}
+	
+	@Override
 	public void newTrade(String symbol, int quantity) {
 		Iterator<Position> iter = positions.iterator();
 		Position cur = null;
+		boolean found = false;
 		while(iter.hasNext()){
 			cur =  iter.next();
 			if(cur.getSymbol().equals(symbol)){
+				found = true;
 				break;
 			}
 		}
-		if(cur == null){
+		if(!found){
 			positions.add(new Position(symbol, quantity));
 		}
 		else{
