@@ -2,16 +2,23 @@ package test;
 
 import static org.junit.Assert.*;
 import hw1.IPortfolio;
-import hw1.IPositionIter;
 import hw1.Portfolio;
-import hw1.Position;
 
 import org.junit.Test;
 
 public class FunctionTest {
+	
+	@Test
+	public void testRemoveZero1() {
+		IPortfolio p1 = new Portfolio();
+		IPortfolio p2 = new Portfolio();
+		p1.newTrade("AA", 100);
+		p1.newTrade("AA", -100);
+		assertEquals(p1, p2);
+	}
 
 	@Test
-	public void testRemoveZero() {
+	public void testRemoveZero2() {
 		IPortfolio p1 = new Portfolio();
 		IPortfolio p2 = new Portfolio();
 		p1.newTrade("AA", 100);
@@ -22,19 +29,12 @@ public class FunctionTest {
 	}
 	
 	@Test
-	public void testNew1() {
+	public void testRemoveZero3() {
 		IPortfolio p1 = new Portfolio();
 		p1.newTrade("AA", 100);
-		IPositionIter iter = p1.getPositionIter();
-		assertEquals(iter.getNextPosition().getQuantity(), 100);
+		p1.newTrade("AA", -100);
+		assertNull(p1.getPositionIter().getNextPosition());
 	}
 	
-	@Test
-	public void testNew2() {
-		IPortfolio p1 = new Portfolio();
-		p1.newTrade("IBM", 100);
-		IPositionIter iter = p1.getPositionIter();
-		assertEquals(iter.getNextPosition().getSymbol(), "IBM");
-	}
 
 }
