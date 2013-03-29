@@ -1,4 +1,4 @@
-package test;
+package hw1.test;
 
 import static org.junit.Assert.*;
 import hw1.IPortfolio;
