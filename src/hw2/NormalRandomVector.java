@@ -6,9 +6,9 @@ public class NormalRandomVector implements RandomVectorGenerator {
 
 	@Override
 	public double[] getVector() {
-		double[] result = new double[Constant.days+1];
+		double[] result = new double[Constant.Days];
 		NormalDistribution normal = new NormalDistribution();
-		for(int i = 0 ; i <= Constant.days ; i++){
+		for(int i = 0 ; i < Constant.Days ; i++){
 			result[i] = normal.sample();
 		}
 		return result;
