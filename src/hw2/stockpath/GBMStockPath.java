@@ -11,16 +11,37 @@ import java.util.List;
 import org.apache.commons.math3.util.Pair;
 import org.joda.time.DateTime;
 
+/**
+ * Implementation of StockPath.
+ * This implementation uses the Geometric Brownian motion (GBM) model, 
+ * which defines the price of day t.
+ * 
+ * @author kerry
+ *
+ */
 public class GBMStockPath implements StockPath {
 	
+	/**
+	 * A list to save the stock path. Designed to optimize memory usage.
+	 */
 	List<Pair<DateTime, Double>> path;
 	
 	private int index;
 	private double[] randomVector;
 	
 	private double localConstant;
+	
+	/**
+	 * A random vector Generator of the stock path.
+	 * In our implementation this should be a RealRandomVector.
+	 */
 	private RandomVectorGenerator g;
 	
+	/**
+	 * Constructor.
+	 * <p> Need to initial the random vector generator.
+	 * </p>
+	 */
 	public GBMStockPath(){
 		RandomVectorGenerator normal = new NormalRandomVector();
 		g = new RealRandomVector(normal);
@@ -28,10 +49,20 @@ public class GBMStockPath implements StockPath {
 		localConstant = Constant.r - Constant.sigma*Constant.sigma/2;
 	}
 	
+	/**
+	 * Private function to get the next number in the random vector. 
+	 * @return the next random number in the vector.
+	 */
 	private double getNextRandom(){
 		return randomVector[index++];
 	}
 
+	/**
+	 * Figure out the price of next day. This is relevant to the current price
+	 * , sigma, r and a random sample of Normal Distribution.
+	 * <p>The method is given by the GBM model.</p>
+	 * @return The (date, price) pair of the next day.
+	 */
 	Pair<DateTime, Double> getNextPrice(){
 		Pair<DateTime, Double> temp;
 		temp = path.get(path.size()-1);
@@ -40,6 +71,14 @@ public class GBMStockPath implements StockPath {
 		return result;
 	}
 	
+	/**
+	 * Generate a stock path using the GBM model. 
+	 * <p>This method calls {@link getNextPrice} the Generate the price of 
+	 * the next day. The initial price is given by the problem and has been set
+	 * in the {@link Constant} class.</p>
+	 * <p>Each time this function been called, it should generate a new random
+	 * vector first, and then generate the price.</p>
+	 */
 	@Override
 	public List<Pair<DateTime, Double>> getPrices() {
 		int n = 0;
