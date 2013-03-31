@@ -1,4 +1,6 @@
-package hw2;
+package hw2.payout;
+
+import hw2.stockpath.StockPath;
 
 //The interface for calculating the payout function
 public interface PayOut {

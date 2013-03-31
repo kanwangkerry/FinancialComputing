@@ -1,4 +1,9 @@
-package hw2;
+package hw2.stockpath;
+
+import hw2.randomGenerator.NormalRandomVector;
+import hw2.randomGenerator.RandomVectorGenerator;
+import hw2.randomGenerator.RealRandomVector;
+import hw2.simulation.Constant;
 
 import java.util.ArrayList;
 import java.util.List;

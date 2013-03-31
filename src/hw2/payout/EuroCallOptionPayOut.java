@@ -1,4 +1,7 @@
-package hw2;
+package hw2.payout;
+
+import hw2.simulation.Constant;
+import hw2.stockpath.StockPath;
 
 import java.util.List;
 

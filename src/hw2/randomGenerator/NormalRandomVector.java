@@ -1,4 +1,6 @@
-package hw2;
+package hw2.randomGenerator;
+
+import hw2.simulation.Constant;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 

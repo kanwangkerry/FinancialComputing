@@ -1,4 +1,10 @@
-package hw2;
+package hw2.simulation;
+
+import hw2.payout.AsiaCallOptionPayOut;
+import hw2.payout.EuroCallOptionPayOut;
+import hw2.payout.PayOut;
+import hw2.stockpath.GBMStockPath;
+import hw2.stockpath.StockPath;
 
 public class SimulationManage {
 	public StateTracker simulate(boolean isEuro) {

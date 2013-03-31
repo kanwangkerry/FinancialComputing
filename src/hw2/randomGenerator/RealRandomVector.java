@@ -1,4 +1,6 @@
-package hw2;
+package hw2.randomGenerator;
+
+import hw2.simulation.Constant;
 
 public class RealRandomVector implements RandomVectorGenerator {
 	

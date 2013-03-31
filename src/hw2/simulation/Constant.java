@@ -1,4 +1,4 @@
-package hw2;
+package hw2.simulation;
 
 public class Constant {
 	public final static int Days = 252;

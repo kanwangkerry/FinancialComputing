@@ -1,17 +1,16 @@
 package hw2.test;
 
 import static org.junit.Assert.*;
-import hw2.AsiaCallOptionPayOut;
-import hw2.Constant;
-import hw2.EuroCallOptionPayOut;
-import hw2.GBMStockPath;
-import hw2.NormalRandomVector;
-import hw2.PayOut;
-import hw2.RandomVectorGenerator;
-import hw2.RealRandomVector;
-import hw2.SimulationManage;
-import hw2.StateTracker;
-import hw2.StockPath;
+import hw2.payout.AsiaCallOptionPayOut;
+import hw2.payout.EuroCallOptionPayOut;
+import hw2.payout.PayOut;
+import hw2.randomGenerator.NormalRandomVector;
+import hw2.randomGenerator.RandomVectorGenerator;
+import hw2.randomGenerator.RealRandomVector;
+import hw2.simulation.Constant;
+import hw2.simulation.SimulationManage;
+import hw2.simulation.StateTracker;
+import hw2.stockpath.GBMStockPath;
 
 import org.junit.Assert;
 import org.junit.Test;
