@@ -8,4 +8,5 @@ public class Constant {
 	public final static double InitValue = 152.35;
 	public final static double EuroStrikePrice = 165;
 	public final static double AsiaStrikePrice = 164;
+	public final static double errorPercentage = 0.01;
 }
