@@ -144,7 +144,7 @@ public class OptionTest {
 		StateTracker s = m.simulate(true);
 		Assert.assertTrue(Constant.PercentIn96 * s.getSigma()
 				/ Math.sqrt(s.getN()) <= Constant.errorPercentage
-				* s.getException());
+				* s.getExpectation());
 	}
 
 	/**
@@ -157,6 +157,6 @@ public class OptionTest {
 		StateTracker s = m.simulate(false);
 		Assert.assertTrue(Constant.PercentIn96 * s.getSigma()
 				/ Math.sqrt(s.getN()) <= Constant.errorPercentage
-				* s.getException());
+				* s.getExpectation());
 	}
 }

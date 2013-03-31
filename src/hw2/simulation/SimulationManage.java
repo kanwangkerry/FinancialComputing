@@ -57,7 +57,7 @@ public class SimulationManage {
 		}
 		System.out.println("Total simulation paths: " + (s.getN() + 1));
 		System.out.println("Final simulation value for the option: "
-				+ s.getException());
+				+ s.getExpectation());
 		return s;
 	}
 
@@ -74,12 +74,12 @@ public class SimulationManage {
 			System.out
 					.println("Current simulation time: " + s.getN()
 							+ " Current Error: " + Constant.errorPercentage
-							* s.getException() + " Current sigma: "
+							* s.getExpectation() + " Current sigma: "
 							+ Constant.PercentIn96 * s.getSigma()
 							/ Math.sqrt(s.getN()));
 		}
 		if (Constant.PercentIn96 * s.getSigma() / Math.sqrt(s.getN()) <= Constant.errorPercentage
-				* s.getException())
+				* s.getExpectation())
 			return true;
 		else
 			return false;
