@@ -1,7 +1,5 @@
 package hw2.randomGenerator;
 
-import hw2.simulation.Constant;
-
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
@@ -15,10 +13,19 @@ import org.apache.commons.math3.distribution.NormalDistribution;
  */
 public class NormalRandomVector implements RandomVectorGenerator {
 	/**
+	 * Length of the vector.
+	 */
+	public int duration;
+	/**
 	 * A local variable to save the Random Vector. This is designed to optimize
 	 * memory usage and to avoid too much memory allocation and collection.
 	 */
-	double[] result = new double[Constant.Days];
+	double[] result;
+	
+	public NormalRandomVector(int d){
+		duration = d;
+		result = new double[duration];
+	}
 
 	/**
 	 * Get a vector who's elements obey a normal distribution.
@@ -27,7 +34,7 @@ public class NormalRandomVector implements RandomVectorGenerator {
 	@Override
 	public double[] getVector() {
 		NormalDistribution normal = new NormalDistribution();
-		for (int i = 0; i < Constant.Days; i++) {
+		for (int i = 0; i < duration; i++) {
 			result[i] = normal.sample();
 		}
 		return result;

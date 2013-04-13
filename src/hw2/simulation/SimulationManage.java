@@ -5,6 +5,8 @@ import hw2.payout.EuroCallOptionPayOut;
 import hw2.payout.PayOut;
 import hw2.stockpath.GBMStockPath;
 import hw2.stockpath.StockPath;
+import hw3.SimulationParameter;
+import hw3.SimulationParameter.OptionType;
 
 /**
  * Simulation manager of the Option price.
@@ -27,20 +29,18 @@ public class SimulationManage {
 	 * to make avoid the uncertainty of random simulation
 	 * </p>
 	 * 
-	 * @param isEuro
-	 *            If true then simulate the Europe call option. Else we will
-	 *            simulate a Aisa call option.
+	 * @param sp The parameters of the simulation.
 	 * @return Return the {@link StateTracker} of the current simulation, which
 	 *         contains the states of the simulation.
 	 */
-	public StateTracker simulate(boolean isEuro) {
+	public StateTracker simulate(SimulationParameter sp) {
 		PayOut p;
-		if (isEuro) {
-			p = new EuroCallOptionPayOut();
+		if (sp.type == OptionType.Europen) {
+			p = new EuroCallOptionPayOut(sp);
 		} else {
-			p = new AsiaCallOptionPayOut();
+			p = new AsiaCallOptionPayOut(sp);
 		}
-		StockPath path = new GBMStockPath();
+		StockPath path = new GBMStockPath(sp);
 		StateTracker s = new StateTracker();
 		double result;
 		// pre-simulate: at least 1000 times to avoid unexceptional errors
@@ -70,9 +70,13 @@ public class SimulationManage {
 	 * @return true if it should stop.
 	 */
 	public static boolean checkIfStop(StateTracker s) {
-		if (s.getN() % 20000 == 0) {
+		if (s.getN() % 2000 == 0) {
+			if(s.topic != null){
+				System.out.print(s.topic + ": ");
+			}
 			System.out
 					.println("Current simulation time: " + s.getN()
+							+ " Current mean: " + s.getExpectation() 
 							+ " Current Error: " + Constant.errorPercentage
 							* s.getExpectation() + " Current sigma: "
 							+ Constant.PercentIn96 * s.getSigma()

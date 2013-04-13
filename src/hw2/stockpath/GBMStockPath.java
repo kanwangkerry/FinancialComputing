@@ -1,9 +1,8 @@
 package hw2.stockpath;
 
-import hw2.randomGenerator.NormalRandomVector;
 import hw2.randomGenerator.RandomVectorGenerator;
 import hw2.randomGenerator.RealRandomVector;
-import hw2.simulation.Constant;
+import hw3.SimulationParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +37,20 @@ public class GBMStockPath implements StockPath {
 	private RandomVectorGenerator g;
 	
 	/**
+	 * A parameter to save the configuration of a stock path.
+	 */
+	SimulationParameter p;
+	/**
 	 * Constructor.
 	 * <p> Need to initial the random vector generator.
 	 * </p>
 	 */
-	public GBMStockPath(){
-		RandomVectorGenerator normal = new NormalRandomVector();
-		g = new RealRandomVector(normal);
+	
+	public GBMStockPath(SimulationParameter s){
+		p = s;
+		g = new RealRandomVector(p.duration);
 		this.path = new ArrayList<Pair<DateTime, Double>>();
-		localConstant = Constant.r - Constant.sigma*Constant.sigma/2;
+		localConstant = p.r - p.sigma*p.sigma/2;
 	}
 	
 	/**
@@ -66,7 +70,7 @@ public class GBMStockPath implements StockPath {
 	Pair<DateTime, Double> getNextPrice(){
 		Pair<DateTime, Double> temp;
 		temp = path.get(path.size()-1);
-		double price = temp.getValue() * Math.pow(Math.E, localConstant+ Constant.sigma* this.getNextRandom());
+		double price = temp.getValue() * Math.pow(Math.E, localConstant+ p.sigma* this.getNextRandom());
 		Pair<DateTime, Double> result = new Pair<DateTime, Double>(temp.getKey().plusDays(1), price);
 		return result;
 	}
@@ -75,7 +79,7 @@ public class GBMStockPath implements StockPath {
 	 * Generate a stock path using the GBM model. 
 	 * <p>This method calls {@link getNextPrice} the Generate the price of 
 	 * the next day. The initial price is given by the problem and has been set
-	 * in the {@link Constant} class.</p>
+	 * in the {@link SimulationParameter} {@link p}.</p>
 	 * <p>Each time this function been called, it should generate a new random
 	 * vector first, and then generate the price.</p>
 	 */
@@ -85,9 +89,9 @@ public class GBMStockPath implements StockPath {
 		this.randomVector = g.getVector();
 		this.index = 0;
 		path.clear();
-		Pair<DateTime, Double> temp = new Pair<DateTime, Double>(new DateTime(), Constant.InitValue);
+		Pair<DateTime, Double> temp = new Pair<DateTime, Double>(new DateTime(), p.InitValue);
 		path.add(temp);
-		while(n++ < Constant.Days){
+		while(n++ < p.duration){
 			path.add(this.getNextPrice());
 		}
 		return path;

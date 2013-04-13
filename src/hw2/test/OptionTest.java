@@ -7,7 +7,6 @@ import java.util.List;
 import hw2.payout.AsiaCallOptionPayOut;
 import hw2.payout.EuroCallOptionPayOut;
 import hw2.payout.PayOut;
-import hw2.randomGenerator.NormalRandomVector;
 import hw2.randomGenerator.RandomVectorGenerator;
 import hw2.randomGenerator.RealRandomVector;
 import hw2.simulation.Constant;
@@ -15,6 +14,8 @@ import hw2.simulation.SimulationManage;
 import hw2.simulation.StateTracker;
 import hw2.stockpath.GBMStockPath;
 import hw2.stockpath.StockPath;
+import hw3.SimulationParameter;
+import hw3.SimulationParameter.OptionType;
 
 import org.apache.commons.math3.util.Pair;
 import org.joda.time.DateTime;
@@ -34,8 +35,10 @@ public class OptionTest {
 	 */
 	@Test
 	public void testPayOutEu() {
-		PayOut e = new EuroCallOptionPayOut();
-		double result = e.getPayout(new GBMStockPath());
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 165, OptionType.Europen, "Test");
+		PayOut e = new EuroCallOptionPayOut(p);
+		double result = e.getPayout(new GBMStockPath(p));
 		assertTrue(result >= 0);
 	}
 
@@ -44,8 +47,11 @@ public class OptionTest {
 	 */
 	@Test
 	public void testPayOutAs() {
-		PayOut e = new AsiaCallOptionPayOut();
-		double result = e.getPayout(new GBMStockPath());
+		
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 164, OptionType.Asia, "Test");
+		PayOut e = new AsiaCallOptionPayOut(p);
+		double result = e.getPayout(new GBMStockPath(p));
 		assertTrue(result >= 0);
 	}
 
@@ -54,8 +60,7 @@ public class OptionTest {
 	 */
 	@Test
 	public void testRandomVector1() {
-		RandomVectorGenerator g = new NormalRandomVector();
-		RandomVectorGenerator r = new RealRandomVector(g);
+		RandomVectorGenerator r = new RealRandomVector(Constant.Days);
 		double[] result1 = r.getVector();
 		double[] result2 = r.getVector();
 		Assert.assertEquals(result1[100] + " " + result2[100], result1[100],
@@ -68,8 +73,7 @@ public class OptionTest {
 	 */
 	@Test
 	public void testRandomVector2() {
-		RandomVectorGenerator g = new NormalRandomVector();
-		RandomVectorGenerator r = new RealRandomVector(g);
+		RandomVectorGenerator r = new RealRandomVector(Constant.Days);
 		double[] result1 = r.getVector();
 		Assert.assertEquals(result1.length, Constant.Days);
 	}
@@ -80,8 +84,7 @@ public class OptionTest {
 	 */
 	@Test
 	public void testRandomVector3() {
-		RandomVectorGenerator g = new NormalRandomVector();
-		RandomVectorGenerator r = new RealRandomVector(g);
+		RandomVectorGenerator r = new RealRandomVector(Constant.Days);
 		double[] result1 = r.getVector();
 		double[] result2 = r.getVector();
 		for (int i = 0; i < result2.length; i++) {
@@ -95,7 +98,9 @@ public class OptionTest {
 	 */
 	@Test
 	public void testStockPath1() {
-		StockPath s = new GBMStockPath();
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 165, OptionType.Asia, "Test");
+		StockPath s = new GBMStockPath(p);
 		Assert.assertEquals(s.getPrices().size(), Constant.Days + 1);
 	}
 
@@ -105,56 +110,62 @@ public class OptionTest {
 	 */
 	@Test
 	public void testStockPath2() {
-		StockPath s = new GBMStockPath();
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 164, OptionType.Asia, "Test");
+		StockPath s = new GBMStockPath(p);
 		Assert.assertEquals(s.getPrices().get(0).getValue(), new Double(
 				Constant.InitValue));
 	}
 
 	/**
-	 * Test stock path.
-	 * Test the date.
+	 * Test stock path. Test the date.
 	 */
 	@Test
 	public void testStockPath3() {
-		StockPath s = new GBMStockPath();
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 164, OptionType.Asia, "Test");
+		StockPath s = new GBMStockPath(p);
 		List<Pair<DateTime, Double>> temp = s.getPrices();
 		Assert.assertEquals(temp.get(3).getKey().getDayOfYear(), temp.get(4)
 				.getKey().getDayOfYear() - 1);
 	}
 
 	/**
-	 * Test stock path.
-	 * Test the date.
+	 * Test stock path. Test the date.
 	 */
 	@Test
 	public void testStockPath4() {
-		StockPath s = new GBMStockPath();
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 165, OptionType.Asia, "Test");
+		StockPath s = new GBMStockPath(p);
 		List<Pair<DateTime, Double>> temp = s.getPrices();
 		Assert.assertTrue(temp.get(100).getKey().getDayOfYear() < temp.get(200)
 				.getKey().getDayOfYear());
 	}
 
 	/**
-	 * Test the simulatoin manager.
-	 * Test the end condition.
+	 * Test the simulatoin manager. Test the end condition.
 	 */
 	@Test
 	public void testSimulationManageEuro() {
 		SimulationManage m = new SimulationManage();
-		StateTracker s = m.simulate(true);
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 165, OptionType.Europen, "Test");
+		StateTracker s = m.simulate(p);
 		Assert.assertTrue(Constant.PercentIn96 * s.getSigma()
 				/ Math.sqrt(s.getN()) <= Constant.errorPercentage
 				* s.getExpectation());
 	}
 
 	/**
-	 * Test the simulatoin manager.
-	 * Test the end condition.
+	 * Test the simulatoin manager. Test the end condition.
 	 */
 	@Test
 	public void testSimulationManageAsia() {
 		SimulationManage m = new SimulationManage();
-		StateTracker s = m.simulate(false);
+		SimulationParameter p = new SimulationParameter(252, 0.01, 0.0001,
+				152.35, 164, OptionType.Asia, "Test");
+		StateTracker s = m.simulate(p);
 		Assert.assertTrue(Constant.PercentIn96 * s.getSigma()
 				/ Math.sqrt(s.getN()) <= Constant.errorPercentage
 				* s.getExpectation());

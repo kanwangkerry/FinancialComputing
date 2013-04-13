@@ -1,7 +1,5 @@
 package hw2.randomGenerator;
 
-import hw2.simulation.Constant;
-
 /**
  * The real implementation of RandomVectorGenerator.
  * <p>
@@ -13,6 +11,11 @@ import hw2.simulation.Constant;
  * 
  */
 public class RealRandomVector implements RandomVectorGenerator {
+	
+	/**
+	 * Lenght of the vector
+	 */
+	int duration;
 	/**
 	 * A normal distributed RandomVectorGenerator. Used as decoratee.
 	 */
@@ -30,7 +33,7 @@ public class RealRandomVector implements RandomVectorGenerator {
 	 * Record the Anti-Thetic result. This is designed to save memory and to
 	 * avoid too much memory allocation and collection.
 	 */
-	double[] result = new double[Constant.Days];
+	double[] result;
 
 	/**
 	 * Contructor. Make a decorator with a normal distributed
@@ -39,8 +42,10 @@ public class RealRandomVector implements RandomVectorGenerator {
 	 * @param normal
 	 *            A normal distributed RandomVectorGenerator
 	 */
-	public RealRandomVector(RandomVectorGenerator normal) {
-		this.normal = normal;
+	public RealRandomVector(int Duration) {
+		this.duration = Duration;
+		result = new double[duration];
+		this.normal = new NormalRandomVector(Duration);
 	}
 
 	/**
@@ -59,7 +64,7 @@ public class RealRandomVector implements RandomVectorGenerator {
 	public double[] getVector() {
 		if (this.useAntiThetic) {
 			this.useAntiThetic = false;
-			for (int i = 0; i < Constant.Days; i++) {
+			for (int i = 0; i < this.duration; i++) {
 				result[i] = -lastResult[i];
 			}
 			return result;
