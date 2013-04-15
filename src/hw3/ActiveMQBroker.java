@@ -17,10 +17,13 @@ public class ActiveMQBroker {
 	 * @throws Exception
 	 */
 	public static void startBroker() throws Exception {
+		//folk a new thread to run the broker
 		Thread t0 = new Thread() {
 			public void run() {
 				try {
+					//config the log4j properties.
 					PropertyConfigurator.configure("conf/log4j.properties");
+					//start a broker service at tcp://localhost:61616
 					BrokerService broker = new BrokerService();
 					broker.setBrokerName("Payout");
 					broker.addConnector("tcp://localhost:61616");

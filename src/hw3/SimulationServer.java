@@ -27,15 +27,36 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 public class SimulationServer {
 
 	/**
-	 * Connections and sessions for setting up transport with middleware.
+	 * Producer connection.
 	 */
 	Connection pConnection;
+	/**
+	 * Producer session.
+	 */
 	Session pSession;
+	/**
+	 * Producer destination.
+	 */
 	Destination pDestination;
+	/**
+	 * Consumer connection
+	 */
 	Connection cConnection;
+	/**
+	 * Consumer session.
+	 */
 	Session cSession;
+	/**
+	 * Consumer Destination
+	 */
 	Destination cDestination;
+	/**
+	 * Server producer
+	 */
 	MessageProducer producer;
+	/**
+	 * Server consumer
+	 */
 	MessageConsumer consumer;
 
 	/**
@@ -106,27 +127,32 @@ public class SimulationServer {
 				ActiveMQConnection.DEFAULT_USER,
 				ActiveMQConnection.DEFAULT_PASSWORD, "tcp://localhost:61616");
 
+		//Create the producer connection.
 		pConnection = connectionFactory.createConnection();
 		pConnection.start();
 		pSession = pConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		pDestination = pSession.createQueue("Simulation Queue");
 		producer = pSession.createProducer(pDestination);
 		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-
+		
+		//Create the consumer connection
 		cConnection = connectionFactory.createConnection();
 		cConnection.start();
 		cSession = cConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		Topic topic = cSession.createTopic(p.topic);
 		consumer = cSession.createConsumer(topic);
-		
+		//Consumer listen to the feedback from the client
 		consumer.setMessageListener(new MessageListener() {
 			@Override
 			public void onMessage(Message message) {
 				if (message instanceof TextMessage) {
 					try {
+						//get the result of the feedback and update the state.
 						double temp = Double
 								.parseDouble(((TextMessage) message).getText());
 						s.update(temp);
+						//If the current state of the simulation shows the 
+						//simulation should stop, then stop the simulation.
 						if (s.getN() > 100 &&  SimulationManage.checkIfStop(s)) {
 							System.out.print("Topic: "+p.topic);
 							System.out.println("Total simulation paths: "
@@ -136,6 +162,8 @@ public class SimulationServer {
 											+ s.getExpectation());
 							consumer.close();
 						} else {
+						//Else, after we collected the 100 feedbacks, we 
+						//send another 100 requests.
 							counter ++;
 							if(counter == 100){
 								counter = 0;
@@ -150,6 +178,7 @@ public class SimulationServer {
 			}
 		});
 
+		//Send the initial 100 requests.
 		for (int i = 0; i < 100; i++) {
 			this.sendSimulateRequest();
 		}

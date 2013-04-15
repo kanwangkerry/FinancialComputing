@@ -38,14 +38,32 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  */
 public class PayoutCalculatorClient {
 	/**
-	 * Connections for both consumer and producer.
+	 * connection for producer.
 	 */
 	Connection pConnection;
+	/**
+	 * session for producer.
+	 */
 	Session pSession;
+	/**
+	 * Destination for consumer
+	 */
 	Destination cDestination;
+	/**
+	 * connection for consumer
+	 */
 	Connection cConnection;
+	/**
+	 * Session for consumer
+	 */
 	Session cSession;
+	/**
+	 * Producer for client
+	 */
 	MessageProducer producer;
+	/**
+	 * Consumer for client
+	 */
 	MessageConsumer consumer;
 
 	/**
@@ -57,13 +75,14 @@ public class PayoutCalculatorClient {
 	 * If you want to run multiple client, you should call this function multiple times.
 	 */
 	public static void startListening() {
+		// folk a new thread as a listener.
 		Thread t1 = new Thread() {
 			public void run() {
 				try {
+					// create a new client and start it.
 					PayoutCalculatorClient c = new PayoutCalculatorClient();
 					c.startClient();
 				} catch (JMSException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -84,6 +103,7 @@ public class PayoutCalculatorClient {
 	 * @throws JMSException
 	 */
 	public void startClient() throws JMSException {
+		// create producer connections
 		final ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
 				ActiveMQConnection.DEFAULT_USER,
 				ActiveMQConnection.DEFAULT_PASSWORD, "tcp://localhost:61616");
@@ -91,6 +111,7 @@ public class PayoutCalculatorClient {
 		pSession = pConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		pConnection.start();
 
+		// create consumer connections
 		cConnection = connectionFactory.createConnection();
 		cSession = cConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		cDestination = cSession.createQueue("Simulation Queue");
@@ -100,9 +121,12 @@ public class PayoutCalculatorClient {
 			@Override
 			public void onMessage(Message message) {
 				try {
+					//process the message send to this client
 					if (message instanceof TextMessage) {
+						//transform the message into a simulation parameter
 						SimulationParameter sp = SimulationParameter
 								.fromString(((TextMessage) message).getText());
+						//use the simulation parameter to calculate a random payout
 						PayOut p;
 						if (sp.type == OptionType.Europen) {
 							p = new EuroCallOptionPayOut(sp);
@@ -111,10 +135,13 @@ public class PayoutCalculatorClient {
 						}
 						StockPath path = new GBMStockPath(sp);
 						double result = p.getPayout(path);
+						//send this topic with producer back to the middleware.
+						//use the topic of this parameter
 						Topic topic = pSession.createTopic(sp.topic);
 						producer = pSession.createProducer(topic);
 						producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 						TextMessage m = pSession.createTextMessage();
+						//the message being sent is mainly the result of the payout
 						m.setText("" + result);
 						producer.send(m);
 						producer.close();
