@@ -231,6 +231,7 @@ public class ExchangeBook {
 									: sell.getPrice()) + " "
 							+ sell.getOrderId());
 				}
+				System.out.println();
 				break;
 			}
 		}
@@ -256,9 +257,11 @@ public class ExchangeBook {
 					System.out.print(buy.getSize()
 							+ " @ "
 							+ (buy.getPrice() == Double.MAX_VALUE ? Double.NaN
-									: buy.getPrice()) + " " + buy.getOrderId());
+									: buy.getPrice()) + " " + buy.getOrderId() + " | ");
 				}
+				System.out.println();
 				break;
+				
 			}
 		}
 	}
